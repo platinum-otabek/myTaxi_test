@@ -2,23 +2,27 @@ name: myTaxi test API
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+
 
 jobs:
-  run-test:
-    services:
-      postgres:
-        image: postgres:9.6
-        ports:
-          - 5432:5432
+  build:
+
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SETTINGS_MODULE: config.settings
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [ 3.7, 3.8, 3.9 ]
+
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.9
-      - name: Install requirements
-        run: pip install -r requirements.txt
-      - name: pytest
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Tests
+        
