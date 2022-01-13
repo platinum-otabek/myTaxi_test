@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 try:
     from .local_settings import *
 except Exception:
-    pass
+    from .local_settings_example import *
 SECRET_KEY = SIMPLE_JWT['SIGNING_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
