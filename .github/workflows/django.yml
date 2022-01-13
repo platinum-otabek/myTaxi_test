@@ -4,6 +4,11 @@ on:
 
 jobs:
   run-test:
+    services:
+      postgres:
+        image: postgres:9.6
+        ports:
+          - 5432:5432
     runs-on: ubuntu-latest
     env:
       DJANGO_SETTINGS_MODULE: config.settings
