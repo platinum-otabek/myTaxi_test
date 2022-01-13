@@ -47,14 +47,15 @@ class OrderClientDetail(generics.RetrieveAPIView):
     queryset = Order.objects.all()
 
     def get(self, request, *args, **kwargs):
-
-        try:
-            from_date = datetime.datetime.strptime(request.query_params.get('from'), '%Y-%m-%d')
-            to_date = datetime.datetime.strptime(request.query_params.get('to'), '%Y-%m-%d')
-            correct_date = True
-        except ValueError:
-            correct_date = False
-        print(correct_date)
+        if request.query_params.get('from') and request.query_params.get('to'):
+            try:
+                from_date = datetime.datetime.strptime(request.query_params.get('from'), '%Y-%m-%d')
+                to_date = datetime.datetime.strptime(request.query_params.get('to'), '%Y-%m-%d')
+                correct_date = True
+            except ValueError:
+                correct_date = False
+        else:
+            correct_date=False
         try:
             client = Client.objects.get(user_ptr_id=self.kwargs['pk'])
             print(client.user_ptr_id)
