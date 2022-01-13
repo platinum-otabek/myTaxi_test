@@ -1,6 +1,5 @@
 name: myTaxi test API
-on:
-  push: [master]
+on: [push]
 
 jobs:
   run-test:
