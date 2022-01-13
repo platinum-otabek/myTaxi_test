@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -45,13 +47,22 @@ class OrderClientDetail(generics.RetrieveAPIView):
     queryset = Order.objects.all()
 
     def get(self, request, *args, **kwargs):
-        from_date = request.query_params.get('from')
-        to_date = request.query_params.get('to')
 
         try:
+            from_date = datetime.datetime.strptime(request.query_params.get('from'), '%Y-%m-%d')
+            to_date = datetime.datetime.strptime(request.query_params.get('to'), '%Y-%m-%d')
+            correct_date = True
+        except ValueError:
+            correct_date = False
+        print(correct_date)
+        try:
             client = Client.objects.get(user_ptr_id=self.kwargs['pk'])
+            print(client.user_ptr_id)
         except Client.DoesNotExist:
             return Response(data={'msg': 'Client not Found'}, status=status.HTTP_404_NOT_FOUND)
-        all_orders = Order.objects.filter(client_id=client.user_ptr_id, date__range=[from_date, to_date])
+        if correct_date:
+            all_orders = Order.objects.filter(client_id=client.user_ptr_id, date__range=[from_date, to_date])
+        else:
+            all_orders = Order.objects.filter(client_id=client.user_ptr_id)
         serializer_orders = OrderSerializer(all_orders, many=True)
         return Response(data=serializer_orders.data)
